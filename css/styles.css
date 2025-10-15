@@ -1,0 +1,194 @@
+/* 1. PALETA DE COLORES (CUSTOMIZADA) Y ESTILOS GLOBALES */
+:root {
+    --color-primario: #FF69B4; /* rosa principal */
+    --color-acento: #f8a5c2; /* Un rosa más suave para acentos */
+    --color-fondo: #fcfcfc; /* fondo casi blanco, muy claro */
+    --color-superficie: #ffffff; /* Blanco puro para las cards y formularios */
+    --color-texto: #333333; /* Un gris oscuro para el texto principal */
+    --color-texto-secundario: #757575; /* Un gris más claro para detalles */
+    --fuente-principal: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Reset básico y configuración del box-sizing */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--fuente-principal);
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+}
+
+/* 2. ESTILOS DEL NAVBAR */
+header {
+    background-color: var(--color-superficie);
+    padding: 0.5rem 2rem; /* Espaciado más compacto */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Sombra más sutil */
+    border-bottom: 1px solid #eee;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px; /* Ancho máximo para el contenido del nav */
+    margin: 0 auto; /* Centrar el nav */
+}
+
+/* Estilo para el logo */
+nav a.logo img {
+    height: 50px; /* Ajusta la altura de tu logo */
+    width: auto;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+}
+
+nav ul a {
+    color: var(--color-texto-secundario);
+    text-decoration: none;
+    font-weight: 600; /* Un poco más de peso para mejor legibilidad */
+    transition: color 0.3s ease;
+}
+
+nav ul a:hover {
+    color: var(--color-primario);
+}
+
+/* 3. LAYOUT GENERAL Y TÍTULOS */
+main {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 2rem auto; /* Centramos el contenido principal */
+}
+
+main h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+    color: var(--color-texto);
+}
+
+/* 4. ESTILOS PARA LOGIN */
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 3rem;
+}
+
+form {
+    background-color: var(--color-superficie);
+    padding: 2.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+form h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--color-texto);
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--color-texto-secundario);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: var(--color-texto);
+    font-size: 1rem;
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: var(--color-primario);
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: var(--color-acento);
+}
+
+
+/* 5. PROTOTIPO DE CARD DE PRODUCTO */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.product-card {
+    background-color: var(--color-superficie);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+}
+
+.product-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+.card-body h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.card-body p {
+    color: var(--color-texto-secundario);
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.card-body button {
+    width: 100%;
+    padding: 0.6rem;
+    background-color: var(--color-primario);
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.card-body button:hover {
+    background-color: var(--color-acento);
+}
