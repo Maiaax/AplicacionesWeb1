@@ -192,3 +192,54 @@ button[type="submit"]:hover {
 .card-body button:hover {
     background-color: var(--color-acento);
 }
+
+/*//////////////////////////////////////////////////////
+
+            PARA LA CARD 
+        (SELECTOR DE CANTIDAD)                          */
+
+.product-card .price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--color-primario);
+}
+
+.quantity-selector {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100px;
+    margin: 1rem auto;
+}
+
+.quantity-selector button {
+    width: 30px;
+    height: 30px;
+    background-color: #eee;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.quantity-selector span {
+    font-weight: bold;
+}
+
+.product-card button.add-to-cart {
+    width: 100%;
+    padding: 0.6rem;
+    background-color: var(--color-primario);
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.product-card button.add-to-cart:hover {
+    background-color: var(--color-acento);
+}
+
