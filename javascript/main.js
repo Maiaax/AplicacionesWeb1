@@ -1,6 +1,7 @@
 // Espera a que todo el HTML esté cargado antes de ejecutar el script
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- Detecta la ruta base (para que / o ../ funcione) ---
     let basePath = '';
     const path = window.location.pathname;
     
@@ -13,13 +14,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault(); 
-            console.log(' sesion exitosa, redirigiendo...');
+            console.log('Sesión exitosa, redirigiendo...');
             // Redirigimos al usuario a la página principal
             window.location.href = `${basePath}index.html`; 
         });
     }
 
-    // --- RENDERIZADO DEL NAVBAR
+    // --- RENDERIZADO DEL NAVBAR ---
     renderNavbar(basePath);
     
     // --- Redirección del Logout/cerrar sesion 
@@ -33,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Lógica de filtrado de categorías ---
     let categoryFilter = 'all'; // 'all' es el default para el home
     if (path.includes('/remeras.html')) {
         categoryFilter = 'remeras';
@@ -43,10 +45,13 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (path.includes('/accesorios.html')) {
         categoryFilter = 'accesorios';
     }
+
     // --- renderizado de las Cards de Productos 
+    // Ahora le pasamos el filtro a la función
     renderProductGrid(basePath, categoryFilter);
 
 });
+
 ///////////
 // --- Estructura de datos para el Navbar 
 ///////
@@ -68,12 +73,9 @@ function renderNavbar(basePath) {
     const header = document.getElementById('header-placeholder');
     if (!header) return; 
 
-    // Creamos los <li> de los enlaces usando el array 'navLinks'
     const linksHtml = navLinks.map(link => 
         `<li><a href="${basePath}${link.url}">${link.title}</a></li>`
-    ).join(''); // ".join('')" une todos los <li> en un solo string
-
-    // Insertamos el HTML del navbar en el header
+    ).join(''); 
     header.innerHTML = `
         <nav>
             <a href="${basePath}index.html" class="logo">
@@ -89,7 +91,6 @@ function renderNavbar(basePath) {
 
 ///////////////
 // --- Estructura de datos para las Cards 
-
 //////////////
 const productos = [
     {
@@ -105,7 +106,7 @@ const productos = [
         img: 'images/pantalon.jpg',
         title: 'Pantalón Cargo Negro',
         desc: 'Pantalón cargo wide leg, tiro alto.',
-        price: 27000,
+        price: 15000,
         category: 'pantalones' 
     },
     {
@@ -113,7 +114,7 @@ const productos = [
         img: 'images/abrigo.jpg',
         title: 'Abrigo Paño Camel',
         desc: 'Abrigo largo de paño con hombreras.',
-        price: 82000,
+        price: 72000,
         category: 'abrigos' 
     },
     {
@@ -121,20 +122,20 @@ const productos = [
         img: 'images/accesorio.jpg',
         title: 'Cartera Charol Negra',
         desc: 'Cartera de mano con correa, simil charol.',
-        price: 45000,
+        price: 35000,
         category: 'accesorios' 
     },
     {
         id: 5,
-        img: 'images/remera.jpg', 
+        img: 'images/remerablanca.jpg', 
         title: 'Remera Básica Blanca',
         desc: 'Remera 100% algodón, cuello redondo.',
-        price: 12000,
+        price: 20000,
         category: 'remeras'
     },
     {
         id: 6,
-        img: 'images/pantalon.jpg', 
+        img: 'images/jeans.jpg', 
         title: 'Jean Mom Celeste',
         desc: 'Jean rígido, tiro alto, corte mom.',
         price: 24500,
@@ -142,22 +143,31 @@ const productos = [
     }
 ];
 
-// --- Función para renderizar todas las cards en la grilla
-function renderProductGrid(basePath) {
+// --- Función para renderizar todas las cards en la grilla (CORREGIDA) ---
+function renderProductGrid(basePath, categoryFilter) { // <-- Acepta el filtro
     const productGrid = document.querySelector('.product-grid');
-    // Si no hay grilla en esta página (ej: login), no hacemos nada
     if (!productGrid) return;
-
-    productGrid.innerHTML = '';  //Vaciamos la grilla x control
+    productGrid.innerHTML = '';
     
-    // Iteramos sobre el array de 'productos' y creamos una card para cada uno
-    productos.forEach(producto => {
-        const productoConRuta = { ...producto, img: `${basePath}${producto.img}` }; // Ajustamos la ruta de la imagen
+    // --- Lógica de filtrado ---
+    let productosAMostrar;
+    
+    if (categoryFilter === 'all') {
+        // Si el filtro es 'all' (para el index.html), mostramos todo
+        productosAMostrar = productos;
+    } else {
+        // Si no, filtramos el array por la categoría
+        productosAMostrar = productos.filter(producto => producto.category === categoryFilter);
+    }
+    
+    // Iteramos sobre el array YA FILTRADO
+    productosAMostrar.forEach(producto => {
+        const productoConRuta = { ...producto, img: `${basePath}${producto.img}` };
         productGrid.innerHTML += renderProductCard(productoConRuta);
     });
 }
 
-// Estructura del componente de Card 
+// --- Estructura del componente de Card ---
 function renderProductCard(producto) {
     return `
         <div class="product-card">

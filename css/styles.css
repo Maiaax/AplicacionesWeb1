@@ -9,7 +9,6 @@
     --fuente-principal: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Reset básico y configuración del box-sizing */
 * {
     margin: 0;
     padding: 0;
@@ -34,13 +33,13 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1200px; /* Ancho máximo para el contenido del nav */
+    max-width: 1200px; 
     margin: 0 auto; /* Centrar el nav */
 }
 
 /* Estilo para el logo */
 nav a.logo img {
-    height: 50px; /* Ajusta la altura de tu logo */
+    height: 50px; 
     width: auto;
 }
 
@@ -53,7 +52,7 @@ nav ul {
 nav ul a {
     color: var(--color-texto-secundario);
     text-decoration: none;
-    font-weight: 600; /* Un poco más de peso para mejor legibilidad */
+    font-weight: 600; 
     transition: color 0.3s ease;
 }
 
@@ -65,7 +64,7 @@ nav ul a:hover {
 main {
     padding: 2rem;
     max-width: 1200px;
-    margin: 2rem auto; /* Centramos el contenido principal */
+    margin: 2rem auto; 
 }
 
 main h1 {
