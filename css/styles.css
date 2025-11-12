@@ -242,3 +242,50 @@ button[type="submit"]:hover {
     background-color: var(--color-acento);
 }
 
+/*//////////////////////////////////////////////////////
+            6. ESTILOS DEL FOOTER                          */
+
+footer {
+    background-color: #333;
+    color: var(--color-texto-secundario);
+    text-align: center;
+    padding: 2rem;
+    margin-top: 4rem;
+}
+
+footer p {
+    margin: 0;
+}
+
+/*//////////////////////////////////////////////////////
+            7. ESTILOS DEL CARRUSEL (SLIDESHOW)         */
+
+.carousel-container {
+    position: relative;
+    width: 100%;
+    height: 400px; 
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    background-color: #eee; /* Color de fondo mientras carga */
+}
+
+.carousel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.carousel-slide.active {
+    opacity: 1;
+}
+
+.carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Hace que la imagen cubra el espacio sin deformarse */
+}
