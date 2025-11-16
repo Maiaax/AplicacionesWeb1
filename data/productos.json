@@ -1,0 +1,51 @@
+[
+    {
+        "id": 1,
+        "img": "images/remera.jpg",
+        "title": "Remera Smashing Pumpkins",
+        "desc": "Remera de algodón con estampa vintage.",
+        "price": 18500,
+        "category": "remeras" 
+    },
+    {
+        "id": 2,
+        "img": "images/remerablanca.jpg", 
+        "title": "Remera Básica Blanca",
+        "desc": "Remera 100% algodón, cuello redondo.",
+        "price": 20000,
+        "category": "remeras"
+    },
+    {
+        "id": 3,
+        "img": "images/jeans.jpg", 
+        "title": "Jean Mom Celeste",
+        "desc": "Jean rígido, tiro alto, corte mom.",
+        "price": 24500,
+        "category": "pantalones"
+    },
+    {
+        "id": 4,
+        "img": "images/pantalon.jpg",
+        "title": "Pantalón Cargo Negro",
+        "desc": "Pantalón cargo wide leg, tiro alto.",
+        "price": 15000,
+        "category": "pantalones" 
+    },
+    {
+        "id": 5,
+        "img": "images/abrigo.jpg",
+        "title": "Abrigo Paño Camel",
+        "desc": "Abrigo largo de paño con hombreras.",
+        "price": 72000,
+        "category": "abrigos" 
+    },
+    {
+        "id": 6,
+        "img": "images/accesorio.jpg",
+        "title": "Cartera Charol Negra",
+        "desc": "Cartera de mano con correa, simil charol.",
+        "price": 35000,
+        "category": "accesorios" 
+    }
+
+]
