@@ -25,16 +25,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // --- RENDERIZADO DE COMPONENTES ---
-    renderNavbar(basePath); // Dibuja el navbar con el contador inicial
+    renderNavbar(basePath); // <-- Aquí ahora decide qué botón mostrar
     renderFooter(); 
     initCarousel(basePath); 
 
-    // --- Cerrar Sesión ---
+    // --- Cerrar Sesión (Solo funciona si el botón existe) ---
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            sessionStorage.removeItem('userEmail');
+            sessionStorage.removeItem('userEmail'); // Borramos el usuario
             console.log('Cerrando sesión, redirigiendo...');
             window.location.href = `${basePath}pages/login.html`;
         });
@@ -80,28 +80,33 @@ const navLinks = [
     { title: 'Carrito', url: 'pages/carrito.html' }
 ];
 
-// --- Render Navbar  ---
+// --- Render Navbar (CON LÓGICA DE LOGIN/LOGOUT) ---
 function renderNavbar(basePath) {
     const header = document.getElementById('header-placeholder');
     if (!header) return; 
 
-    // Calculamos la cantidad total de items en el carrito
+    // Verificamos si hay usuario logueado
+    const user = sessionStorage.getItem('userEmail');
+
+    // 2. Calculamos el contador del carrito
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
-    
-    //  Si hay items, preparamos el texto con el contador
-    // Si es 0, dejamos solo "Carrito"
     const cartLabel = totalItems > 0 ? `Carrito (${totalItems})` : 'Carrito';
 
-    // 3. Creamos los links dinámicamente
     const linksHtml = navLinks.map(link => {
-        // Si es el link del carrito, usamos el texto con el contador
         const title = link.title === 'Carrito' ? cartLabel : link.title;
-        // Resaltar el link del carrito si tiene items
-        const activeClass = link.title === 'Carrito' && totalItems > 0 ? 'style="font-weight: bold; color: var(--color-primario);"' : '';
-        
-        return `<li><a href="${basePath}${link.url}" ${activeClass}>${title}</a></li>`;
+        return `<li><a href="${basePath}${link.url}">${title}</a></li>`;
     }).join(''); 
+
+    // Generamos el link de Login o Logout según corresponda
+    let authLinkHtml = '';
+    if (user) {
+        // Si hay usuario: Botón de Cerrar Sesión
+        authLinkHtml = `<li><a href="#" id="logout-btn" style="color: var(--color-primario); font-weight: bold;">Cerrar Sesión</a></li>`;
+    } else {
+        // Si NO hay usuario: Botón de Iniciar Sesión
+        authLinkHtml = `<li><a href="${basePath}pages/login.html">Iniciar Sesión</a></li>`;
+    }
 
     header.innerHTML = `
         <nav>
@@ -110,8 +115,7 @@ function renderNavbar(basePath) {
             </a>
             <ul>
                 ${linksHtml}
-                <li><a href="#" id="logout-btn">Cerrar Sesión</a></li>
-            </ul>
+                ${authLinkHtml} </ul>
         </nav>
     `;
 }
@@ -123,25 +127,24 @@ function renderFooter() {
     footer.innerHTML = `<p>© ${new Date().getFullYear()} Amarte Showroom. Todos los derechos reservados.</p>`;
 }
 
-// --- Render Carrusel  ---
+// --- Render Carrusel (Luxury) ---
 function initCarousel(basePath) {
     const container = document.getElementById('carousel-placeholder');
     if (!container) return; 
 
-    // Usamos tus imágenes y textos 
     const slidesData = [
         {
-            img: 'images/remera.jpg', 
+            img: 'images/banner1.jpg', 
             title: 'ELEGANCIA ATEMPORAL',
             text: 'Descubre la nueva colección 2025.'
         },
         {
-            img: 'images/abrigo.jpg', 
+            img: 'images/banner2.jpg', 
             title: 'ESENCIA & CARÁCTER',
             text: 'Prendas que definen tu estilo.'
         },
         {
-            img: 'images/jeans.jpg', 
+            img: 'images/banner3.jpg', 
             title: 'DENIM DE ALTA COSTURA',
             text: 'La comodidad se encuentra con el lujo.'
         }
@@ -243,7 +246,7 @@ function activateProductCards() {
     });
 }
 
-// --- Agregar al Carrito  ---
+// --- Agregar al Carrito ---
 function addCartEventListeners(productos, basePath) {
     const buttons = document.querySelectorAll('.add-to-cart');
     buttons.forEach(button => {
@@ -267,7 +270,8 @@ function addCartEventListeners(productos, basePath) {
             
             localStorage.setItem('cart', JSON.stringify(cart));
             
-            renderNavbar(basePath); // Actualiza el navbar con el nuevo contador
+            // Actualizar Navbar (Contador)
+            renderNavbar(basePath);
 
             alert(`¡Agregaste ${quantity} unidad(es) de "${productToAdd.title}" al carrito!`);
         });
@@ -313,14 +317,24 @@ function renderCartItems(container, basePath) {
     `;
     container.appendChild(summaryDiv);
 
-    addDeleteCartEventListeners();
+addDeleteCartEventListeners(); // Agregar funcionalidad de eliminar
     
+    // === VALIDACIÓN DE LOGIN AL COMPRAR ===
     document.getElementById('btn-buy').addEventListener('click', () => {
-        simulatePurchase(cart, totalAmount);
+        const user = sessionStorage.getItem('userEmail');
+        
+        if (!user) {
+            // Si no hay usuario, mostramos alerta y redirigimos
+            alert('⚠️ Para finalizar la compra, necesitas iniciar sesión primero.');
+            window.location.href = `${basePath}pages/login.html`;
+        } else {
+            // Si está logueado, procesamos la compra
+            simulatePurchase(cart, totalAmount);
+        }
     });
 }
 
-// --- Simulador de Ticket ---
+// --- Simular Ticket ---
 function simulatePurchase(cart, total) {
     const user = sessionStorage.getItem('userEmail') || 'Cliente';
     let ticket = `🧾 TICKET DE COMPRA - AMARTE SHOWROOM\n----------------------------------\n`;
@@ -338,7 +352,7 @@ function simulatePurchase(cart, total) {
 }
 
 // --- Borrar del Carrito ---
-function addDeleteCartEventListeners() {
+function addDeleteCartEventListeners(basePath) {
     const buttons = document.querySelectorAll('.delete-btn');
     buttons.forEach(button => {
         button.addEventListener('click', (e) => {
@@ -346,6 +360,7 @@ function addDeleteCartEventListeners() {
             let cart = JSON.parse(localStorage.getItem('cart') || '[]');
             const newCart = cart.filter(item => item.id != productId);
             localStorage.setItem('cart', JSON.stringify(newCart));
+            
             location.reload(); 
         });
     });
