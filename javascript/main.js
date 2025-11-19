@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', async () => { // Convertimos la función principal en 'async' para poder usar 'await'
+// Convertimos la función principal en 'async' para poder usar 'await'
+document.addEventListener('DOMContentLoaded', async () => {
 
     // --- Detecta la ruta base ---
     let basePath = '';
@@ -24,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => { // Convertimos la fu
     }
 
     // --- RENDERIZADO DE COMPONENTES ---
-    renderNavbar(basePath);
+    renderNavbar(basePath); // Dibuja el navbar con el contador inicial
     renderFooter(); 
     initCarousel(basePath); 
 
@@ -79,14 +80,29 @@ const navLinks = [
     { title: 'Carrito', url: 'pages/carrito.html' }
 ];
 
-// --- Render Navbar ---
+// --- Render Navbar  ---
 function renderNavbar(basePath) {
     const header = document.getElementById('header-placeholder');
     if (!header) return; 
 
-    const linksHtml = navLinks.map(link => 
-        `<li><a href="${basePath}${link.url}">${link.title}</a></li>`
-    ).join(''); 
+    // Calculamos la cantidad total de items en el carrito
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+    
+    //  Si hay items, preparamos el texto con el contador
+    // Si es 0, dejamos solo "Carrito"
+    const cartLabel = totalItems > 0 ? `Carrito (${totalItems})` : 'Carrito';
+
+    // 3. Creamos los links dinámicamente
+    const linksHtml = navLinks.map(link => {
+        // Si es el link del carrito, usamos el texto con el contador
+        const title = link.title === 'Carrito' ? cartLabel : link.title;
+        // Resaltar el link del carrito si tiene items
+        const activeClass = link.title === 'Carrito' && totalItems > 0 ? 'style="font-weight: bold; color: var(--color-primario);"' : '';
+        
+        return `<li><a href="${basePath}${link.url}" ${activeClass}>${title}</a></li>`;
+    }).join(''); 
+
     header.innerHTML = `
         <nav>
             <a href="${basePath}index.html" class="logo">
@@ -107,58 +123,55 @@ function renderFooter() {
     footer.innerHTML = `<p>© ${new Date().getFullYear()} Amarte Showroom. Todos los derechos reservados.</p>`;
 }
 
-// --- Render Carrusel ---
+// --- Render Carrusel  ---
 function initCarousel(basePath) {
     const container = document.getElementById('carousel-placeholder');
     if (!container) return; 
 
-    // Array de objetos: Imagen + textos, como en una pagina real
+    // Usamos tus imágenes y textos 
     const slidesData = [
         {
-            img: 'images/banner1.jpg', 
+            img: 'images/remera.jpg', 
             title: 'ELEGANCIA ATEMPORAL',
             text: 'Descubre la nueva colección 2025.'
         },
         {
-            img: 'images/banner2.jpg', 
+            img: 'images/abrigo.jpg', 
             title: 'ESENCIA & CARÁCTER',
             text: 'Prendas que definen tu estilo.'
         },
         {
-            img: 'images/banner3.jpg', 
+            img: 'images/jeans.jpg', 
             title: 'DENIM DE ALTA COSTURA',
             text: 'La comodidad se encuentra con el lujo.'
         }
     ];
+
     let currentSlide = 0;
 
-// Crear las diapositivas
     slidesData.forEach((item, index) => {
         const slide = document.createElement('div');
         slide.className = 'carousel-slide';
         if (index === 0) slide.classList.add('active');
 
-        // Contenido de cada slide
-        slide.innerHTML = ` 
+        slide.innerHTML = `
             <img src="${basePath}${item.img}" alt="${item.title}">
-            <div class="carousel-overlay"></div> <div class="carousel-content"> 
+            <div class="carousel-overlay"></div>
+            <div class="carousel-content">
                 <h2>${item.title}</h2>
                 <p>${item.text}</p>
-                <a href="#product-grid" class="btn-luxury">VER COLECCIÓN</a>
+                <a href="#" class="btn-luxury">VER COLECCIÓN</a>
             </div>
         `;
         container.appendChild(slide);
     });
-// Seleccionar todas las diapositivas
-    const slides = document.querySelectorAll('.carousel-slide');
 
-    // Lógica de cambio automático
+    const slides = document.querySelectorAll('.carousel-slide');
     setInterval(() => {
         slides[currentSlide].classList.remove('active');
         currentSlide = (currentSlide + 1) % slides.length;
         slides[currentSlide].classList.add('active');
     }, 5000); 
-
 }
 
 // --- Función Renderizado de Grilla (Catálogo) ---
@@ -185,12 +198,11 @@ function renderProductGrid(basePath, categoryFilter, productos) {
         productGrid.innerHTML += renderProductCard(productoConRuta);
     });
     
-    // --- ACTIVAMOS LA LÓGICA DE LOS BOTONES ---
-    activateProductCards(); // <-- Activa los '+' y '-'
-    addCartEventListeners(productos); // <-- Activa el botón "Agregar al carrito"
+    activateProductCards(); 
+    addCartEventListeners(productos, basePath); 
 }
 
-// --- Estructura de Card (Con clases para los selectores) ---
+// --- Estructura de Card ---
 function renderProductCard(producto) {
     return `
         <div class="product-card" data-id="${producto.id}">
@@ -211,7 +223,7 @@ function renderProductCard(producto) {
     `;
 }
 
-// ---  Función para activar los botones '+' y '-'              ---
+// --- Activar botones + y - ---
 function activateProductCards() {
     const cards = document.querySelectorAll('.product-card');
     cards.forEach(card => {
@@ -221,9 +233,7 @@ function activateProductCards() {
 
         btnMinus.addEventListener('click', () => {
             let currentQty = parseInt(quantitySpan.innerText);
-            if (currentQty > 1) {
-                quantitySpan.innerText = currentQty - 1;
-            }
+            if (currentQty > 1) quantitySpan.innerText = currentQty - 1;
         });
 
         btnPlus.addEventListener('click', () => {
@@ -234,29 +244,20 @@ function activateProductCards() {
 }
 
 // --- Agregar al Carrito  ---
-function addCartEventListeners(productos) {
+function addCartEventListeners(productos, basePath) {
     const buttons = document.querySelectorAll('.add-to-cart');
-    
     buttons.forEach(button => {
         button.addEventListener('click', (e) => {
             const productId = e.target.dataset.id;
-            
-            // Buscamos la card para leer la cantidad del span
             const card = e.target.closest('.product-card');
             const quantity = parseInt(card.querySelector('.quantity-num').innerText);
 
             const productToAdd = productos.find(p => p.id == productId);
             if (!productToAdd) return;
 
-            // Objeto a guardar producto + cantidad
-            const cartItem = {
-                ...productToAdd,
-                quantity: quantity
-            };
-
+            const cartItem = { ...productToAdd, quantity: quantity };
             let cart = JSON.parse(localStorage.getItem('cart') || '[]');
             
-            // Si ya existe, sumamos cantidad; si no, lo agregamos
             const existingIndex = cart.findIndex(p => p.id == productId);
             if (existingIndex > -1) {
                 cart[existingIndex].quantity += quantity;
@@ -266,12 +267,14 @@ function addCartEventListeners(productos) {
             
             localStorage.setItem('cart', JSON.stringify(cart));
             
+            renderNavbar(basePath); // Actualiza el navbar con el nuevo contador
+
             alert(`¡Agregaste ${quantity} unidad(es) de "${productToAdd.title}" al carrito!`);
         });
     });
 }
 
-// ---  Dibujar Carrito  ---
+// --- Render Carrito (Página Carrito) ---
 function renderCartItems(container, basePath) {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     
@@ -281,28 +284,27 @@ function renderCartItems(container, basePath) {
     }
     
     container.innerHTML = ''; 
-    let totalAmount = 0; 
+    let totalAmount = 0;
 
     cart.forEach(item => {
         const subtotal = item.price * item.quantity;
         totalAmount += subtotal;
-
         const itemConRuta = { ...item, img: `${basePath}${item.img}` };
+        
         container.innerHTML += `
             <div class="cart-item">
                 <img src="${itemConRuta.img}" alt="${item.title}">
                 <div class="cart-item-info">
                     <h3>${item.title}</h3>
-                    <p>Precio unitario: $${item.price.toLocaleString('es-AR')}</p>
+                    <p>Precio: $${item.price.toLocaleString('es-AR')}</p>
                     <p>Cantidad: ${item.quantity}</p>
-                    <p style="color: #666;">Subtotal: $${subtotal.toLocaleString('es-AR')}</p>
+                    <p>Subtotal: $${subtotal.toLocaleString('es-AR')}</p>
                 </div>
                 <button class="delete-btn" data-id="${item.id}">Eliminar</button>
             </div>
         `;
     });
     
-    // --- AGREGAR RESUMEN Y BOTÓN DE COMPRA ---
     const summaryDiv = document.createElement('div');
     summaryDiv.className = 'cart-summary';
     summaryDiv.innerHTML = `
@@ -310,41 +312,32 @@ function renderCartItems(container, basePath) {
         <button id="btn-buy" class="btn-buy">Finalizar Compra</button>
     `;
     container.appendChild(summaryDiv);
-    
-    // Activar botones
+
     addDeleteCartEventListeners();
     
-    // Evento para el botón de comprar
     document.getElementById('btn-buy').addEventListener('click', () => {
         simulatePurchase(cart, totalAmount);
     });
 }
 
-// --- Función Ticket de Compra ---
+// --- Simulador de Ticket ---
 function simulatePurchase(cart, total) {
     const user = sessionStorage.getItem('userEmail') || 'Cliente';
-    
-    let ticket = `🧾 TICKET DE COMPRA - AMARTE SHOWROOM\n`;
-    ticket += `----------------------------------\n`;
-    ticket += `Cliente: ${user}\n`;
-    ticket += `Fecha: ${new Date().toLocaleDateString()}\n`;
-    ticket += `----------------------------------\n`;
+    let ticket = `🧾 TICKET DE COMPRA - AMARTE SHOWROOM\n----------------------------------\n`;
+    ticket += `Cliente: ${user}\nFecha: ${new Date().toLocaleDateString()}\n----------------------------------\n`;
     
     cart.forEach(item => {
         ticket += `${item.quantity} x ${item.title} - $${(item.price * item.quantity).toLocaleString('es-AR')}\n`;
     });
     
-    ticket += `----------------------------------\n`;
-    ticket += `TOTAL PAGADO: $${total.toLocaleString('es-AR')}\n`;
-    ticket += `\n¡Gracias por tu compra! 💖`;
+    ticket += `----------------------------------\nTOTAL PAGADO: $${total.toLocaleString('es-AR')}\n\n¡Gracias por tu compra! 💖`;
 
-    alert(ticket); // Muestra el ticket
-    
-    localStorage.removeItem('cart'); // Vacía el carrito
-    location.reload(); // Recarga la página
+    alert(ticket);
+    localStorage.removeItem('cart');
+    location.reload();
 }
 
-// --- Función Eliminar del Carrito ---
+// --- Borrar del Carrito ---
 function addDeleteCartEventListeners() {
     const buttons = document.querySelectorAll('.delete-btn');
     buttons.forEach(button => {
@@ -353,7 +346,6 @@ function addDeleteCartEventListeners() {
             let cart = JSON.parse(localStorage.getItem('cart') || '[]');
             const newCart = cart.filter(item => item.id != productId);
             localStorage.setItem('cart', JSON.stringify(newCart));
-            console.log('Producto eliminado, recargando...');
             location.reload(); 
         });
     });
