@@ -1,4 +1,4 @@
-    document.addEventListener('DOMContentLoaded', async () => {  // Convertimos la función principal en 'async' para poder usar 'await'
+document.addEventListener('DOMContentLoaded', async () => { // Convertimos la función principal en 'async' para poder usar 'await'
 
     // --- Detecta la ruta base ---
     let basePath = '';
@@ -8,44 +8,32 @@
         basePath = '../';
     }
 
-    // ---  Traer información por medio de fetch ---
+    // --- Traer información por medio de fetch ---
     const productos = await fetchProducts(basePath);
 
-    // ---  Guardar datos del usuario en sessionStorage ---
+    // --- Guardar datos del usuario en sessionStorage (Login) ---
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault(); 
-            
-            // Capturamos el email del formulario
             const email = loginForm.querySelector('#email').value;
-            
-            // Guardamos el email en sessionStorage
             sessionStorage.setItem('userEmail', email);
-            
             console.log('Sesión exitosa, redirigiendo...');
             window.location.href = `${basePath}index.html`; 
         });
     }
 
-    // --- RENDERIZADO DEL NAVBAR ---
+    // --- RENDERIZADO DE COMPONENTES ---
     renderNavbar(basePath);
-
-    // --- RENDERIZADO DEL FOOTER ---
     renderFooter(); 
-    
-    // --- INICIAR CARRUSEL ---
     initCarousel(basePath); 
 
-    // ---  Cerrar Sesión ---
+    // --- Cerrar Sesión ---
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            
-            // Limpiamos el sessionStorage
             sessionStorage.removeItem('userEmail');
-            
             console.log('Cerrando sesión, redirigiendo...');
             window.location.href = `${basePath}pages/login.html`;
         });
@@ -53,35 +41,27 @@
 
     // --- Lógica de filtrado de categorías ---
     let categoryFilter = 'all'; 
-    if (path.includes('/remeras.html')) {
-        categoryFilter = 'remeras';
-    } else if (path.includes('/pantalones.html')) {
-        categoryFilter = 'pantalones';
-    } else if (path.includes('/abrigos.html')) {
-        categoryFilter = 'abrigos';
-    } else if (path.includes('/accesorios.html')) {
-        categoryFilter = 'accesorios';
-    }
+    if (path.includes('/remeras.html')) categoryFilter = 'remeras';
+    else if (path.includes('/pantalones.html')) categoryFilter = 'pantalones';
+    else if (path.includes('/abrigos.html')) categoryFilter = 'abrigos';
+    else if (path.includes('/accesorios.html')) categoryFilter = 'accesorios';
 
-    // ---  Rellenar las cards ---
+    // --- Rellenar las cards (Catálogo) ---
     renderProductGrid(basePath, categoryFilter, productos);
     
-    // ---Lógica de la Página del Carrito ---
+    // --- Lógica de la Página del Carrito ---
     const cartContainer = document.getElementById('cart-items-container');
     if (cartContainer) {
-        // Si estamos en la página del carrito, dibujamos los items
         renderCartItems(cartContainer, basePath);
     }
 
 });
 
-// --- Función de Fetch  ---
+// --- Función de Fetch ---
 async function fetchProducts(basePath) {
     try {
         const response = await fetch(`${basePath}data/productos.json`);
-        if (!response.ok) {
-            throw new Error(`Error al cargar productos: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`Error al cargar productos: ${response.status}`);
         return await response.json();
     } catch (error) {
         console.error(error);
@@ -89,21 +69,17 @@ async function fetchProducts(basePath) {
     }
 }
 
-///////////
-// --- Estructura de datos para el Navbar  ---
-///////
+// --- Estructura de datos para el Navbar ---
 const navLinks = [
     { title: 'Inicio', url: 'index.html' },
     { title: 'Remeras', url: 'categoria/remeras.html' },
     { title: 'Pantalones', url: 'categoria/pantalones.html' },
     { title: 'Abrigos', url: 'categoria/abrigos.html' },
     { title: 'Accesorios', url: 'categoria/accesorios.html' },
-    { title: 'Carrito', url: 'pages/carrito.html' } // <-- ENLACE AL CARRITO
+    { title: 'Carrito', url: 'pages/carrito.html' }
 ];
 
-///////////
-// --- Función para crear el componente Navbar  ---
-///////////////////
+// --- Render Navbar ---
 function renderNavbar(basePath) {
     const header = document.getElementById('header-placeholder');
     if (!header) return; 
@@ -124,25 +100,19 @@ function renderNavbar(basePath) {
     `;
 }
 
-// --- Función Footer ---
+// --- Render Footer ---
 function renderFooter() {
     const footer = document.getElementById('footer-placeholder');
     if (!footer) return;
-    footer.innerHTML = `
-        <p>© ${new Date().getFullYear()} Amarte Showroom. Todos los derechos reservados.</p>
-    `;
+    footer.innerHTML = `<p>© ${new Date().getFullYear()} Amarte Showroom. Todos los derechos reservados.</p>`;
 }
 
-// --- Función Carrusel  ---
+// --- Render Carrusel ---
 function initCarousel(basePath) {
     const container = document.getElementById('carousel-placeholder');
     if (!container) return; 
 
-    const images = [
-        'images/abrigo.jpg',
-        'images/jeans.jpg',
-        'images/remera.jpg'
-    ];
+    const images = ['images/abrigo.jpg', 'images/jeans.jpg', 'images/remera.jpg'];
     let currentSlide = 0;
 
     images.forEach((img, index) => {
@@ -154,7 +124,6 @@ function initCarousel(basePath) {
     });
 
     const slides = document.querySelectorAll('.carousel-slide');
-
     setInterval(() => {
         slides[currentSlide].classList.remove('active');
         currentSlide = (currentSlide + 1) % slides.length;
@@ -162,7 +131,7 @@ function initCarousel(basePath) {
     }, 4000); 
 }
 
-// --- Función Renderizado de Grilla  ---
+// --- Función Renderizado de Grilla (Catálogo) ---
 function renderProductGrid(basePath, categoryFilter, productos) { 
     const productGrid = document.querySelector('.product-grid');
     if (!productGrid) return;
@@ -173,7 +142,6 @@ function renderProductGrid(basePath, categoryFilter, productos) {
     if (categoryFilter === 'all') {
         productosAMostrar = [];
         const categorias = ['remeras', 'pantalones', 'abrigos', 'accesorios'];
-        
         categorias.forEach(cat => {
             const productosDeCategoria = productos.filter(p => p.category === cat);
             productosAMostrar.push(...productosDeCategoria.slice(0, 2));
@@ -187,14 +155,15 @@ function renderProductGrid(basePath, categoryFilter, productos) {
         productGrid.innerHTML += renderProductCard(productoConRuta);
     });
     
-    // ---  Añadir items al localStorage ---
-    addCartEventListeners(productos);
+    // --- ACTIVAMOS LA LÓGICA DE LOS BOTONES ---
+    activateProductCards(); // <-- Activa los '+' y '-'
+    addCartEventListeners(productos); // <-- Activa el botón "Agregar al carrito"
 }
 
-// --- Función Estructura de Card (MODIFICADA) ---
+// --- Estructura de Card (Con clases para los selectores) ---
 function renderProductCard(producto) {
     return `
-        <div class="product-card">
+        <div class="product-card" data-id="${producto.id}">
             <img src="${producto.img}" alt="${producto.title}">
             <div class="card-body">
                 <h3>${producto.title}</h3>
@@ -202,9 +171,9 @@ function renderProductCard(producto) {
                 <p class="price">$${producto.price.toLocaleString('es-AR')}</p>
                 
                 <div class="quantity-selector">
-                    <button>-</button>
-                    <span>1</span>
-                    <button>+</button>
+                    <button class="btn-minus">-</button>
+                    <span class="quantity-num">1</span>
+                    <button class="btn-plus">+</button>
                 </div>
                 <button class="add-to-cart" data-id="${producto.id}">Agregar al carrito</button>
             </div>
@@ -212,93 +181,149 @@ function renderProductCard(producto) {
     `;
 }
 
-// ---  Añadir Event Listeners a los botones de las cards ---
+// ---  Función para activar los botones '+' y '-'              ---
+function activateProductCards() {
+    const cards = document.querySelectorAll('.product-card');
+    cards.forEach(card => {
+        const btnMinus = card.querySelector('.btn-minus');
+        const btnPlus = card.querySelector('.btn-plus');
+        const quantitySpan = card.querySelector('.quantity-num');
+
+        btnMinus.addEventListener('click', () => {
+            let currentQty = parseInt(quantitySpan.innerText);
+            if (currentQty > 1) {
+                quantitySpan.innerText = currentQty - 1;
+            }
+        });
+
+        btnPlus.addEventListener('click', () => {
+            let currentQty = parseInt(quantitySpan.innerText);
+            quantitySpan.innerText = currentQty + 1;
+        });
+    });
+}
+
+// --- Agregar al Carrito  ---
 function addCartEventListeners(productos) {
     const buttons = document.querySelectorAll('.add-to-cart');
     
     buttons.forEach(button => {
         button.addEventListener('click', (e) => {
-            // 1. Obtenemos el ID del producto desde el atributo data-id
             const productId = e.target.dataset.id;
             
-            // 2. Buscamos el producto completo en nuestro array de productos
-            // Usamos '==' porque el id del JSON es número y el data-id es string
+            // Buscamos la card para leer la cantidad del span
+            const card = e.target.closest('.product-card');
+            const quantity = parseInt(card.querySelector('.quantity-num').innerText);
+
             const productToAdd = productos.find(p => p.id == productId);
             if (!productToAdd) return;
 
-            // 3. Obtenemos el carrito actual de localStorage
-            // Si no hay nada, '|| []' nos da un array vacío
+            // Objeto a guardar producto + cantidad
+            const cartItem = {
+                ...productToAdd,
+                quantity: quantity
+            };
+
             let cart = JSON.parse(localStorage.getItem('cart') || '[]');
             
-            // 4. Añadimos el nuevo producto al array del carrito
-            cart.push(productToAdd);
+            // Si ya existe, sumamos cantidad; si no, lo agregamos
+            const existingIndex = cart.findIndex(p => p.id == productId);
+            if (existingIndex > -1) {
+                cart[existingIndex].quantity += quantity;
+            } else {
+                cart.push(cartItem);
+            }
             
-            // 5. Guardamos el array actualizado de vuelta en localStorage
             localStorage.setItem('cart', JSON.stringify(cart));
             
-            console.log('Producto añadido al carrito:', productToAdd.title);
-            alert('¡Producto añadido al carrito!');
+            alert(`¡Agregaste ${quantity} unidad(es) de "${productToAdd.title}" al carrito!`);
         });
     });
 }
 
-// ---  Dibujar los items en la página del carrito ---
+// ---  Dibujar Carrito  ---
 function renderCartItems(container, basePath) {
-    // Obtenemos el carrito de localStorage
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     
-    // Verificamos si está vacío
     if (cart.length === 0) {
         container.innerHTML = '<p class="cart-empty-message">Tu carrito está vacío.</p>';
         return;
     }
     
-    // Si hay items, los dibujamos
-    container.innerHTML = ''; // Limpiamos el contenedor
+    container.innerHTML = ''; 
+    let totalAmount = 0; 
+
     cart.forEach(item => {
-        // Corregimos la ruta de la imagen para que funcione en la página del carrito
+        const subtotal = item.price * item.quantity;
+        totalAmount += subtotal;
+
         const itemConRuta = { ...item, img: `${basePath}${item.img}` };
-        container.innerHTML += renderCartItem(itemConRuta);
+        container.innerHTML += `
+            <div class="cart-item">
+                <img src="${itemConRuta.img}" alt="${item.title}">
+                <div class="cart-item-info">
+                    <h3>${item.title}</h3>
+                    <p>Precio unitario: $${item.price.toLocaleString('es-AR')}</p>
+                    <p>Cantidad: ${item.quantity}</p>
+                    <p style="color: #666;">Subtotal: $${subtotal.toLocaleString('es-AR')}</p>
+                </div>
+                <button class="delete-btn" data-id="${item.id}">Eliminar</button>
+            </div>
+        `;
     });
     
-    addDeleteCartEventListeners(); // Añadimos los event listeners a los botones de "Eliminar"
-}
-
-// ---  Plantilla HTML para un item del carrito ---
-function renderCartItem(item) {
-    return `
-        <div class="cart-item">
-            <img src="${item.img}" alt="${item.title}">
-            <div class="cart-item-info">
-                <h3>${item.title}</h3>
-                <p>$${item.price.toLocaleString('es-AR')}</p>
-            </div>
-            <button class="delete-btn" data-id="${item.id}">Eliminar</button>
-        </div>
+    // --- AGREGAR RESUMEN Y BOTÓN DE COMPRA ---
+    const summaryDiv = document.createElement('div');
+    summaryDiv.className = 'cart-summary';
+    summaryDiv.innerHTML = `
+        <h3>Total a Pagar: $${totalAmount.toLocaleString('es-AR')}</h3>
+        <button id="btn-buy" class="btn-buy">Finalizar Compra</button>
     `;
+    container.appendChild(summaryDiv);
+    
+    // Activar botones
+    addDeleteCartEventListeners();
+    
+    // Evento para el botón de comprar
+    document.getElementById('btn-buy').addEventListener('click', () => {
+        simulatePurchase(cart, totalAmount);
+    });
 }
 
-// ---  Añadir listeners a los botones de Eliminar ---
+// --- Función Ticket de Compra ---
+function simulatePurchase(cart, total) {
+    const user = sessionStorage.getItem('userEmail') || 'Cliente';
+    
+    let ticket = `🧾 TICKET DE COMPRA - AMARTE SHOWROOM\n`;
+    ticket += `----------------------------------\n`;
+    ticket += `Cliente: ${user}\n`;
+    ticket += `Fecha: ${new Date().toLocaleDateString()}\n`;
+    ticket += `----------------------------------\n`;
+    
+    cart.forEach(item => {
+        ticket += `${item.quantity} x ${item.title} - $${(item.price * item.quantity).toLocaleString('es-AR')}\n`;
+    });
+    
+    ticket += `----------------------------------\n`;
+    ticket += `TOTAL PAGADO: $${total.toLocaleString('es-AR')}\n`;
+    ticket += `\n¡Gracias por tu compra! 💖`;
+
+    alert(ticket); // Muestra el ticket
+    
+    localStorage.removeItem('cart'); // Vacía el carrito
+    location.reload(); // Recarga la página
+}
+
+// --- Función Eliminar del Carrito ---
 function addDeleteCartEventListeners() {
     const buttons = document.querySelectorAll('.delete-btn');
-    
     buttons.forEach(button => {
         button.addEventListener('click', (e) => {
-            // Obtenemos el ID del producto a eliminar
             const productId = e.target.dataset.id;
-            
-            // Obtenemos el carrito actual
             let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            
-            // Filtramos el carrito para crear un NUEVO array
-            // que contenga todos los items MENOS el que tiene el ID a eliminar
             const newCart = cart.filter(item => item.id != productId);
-            
-            // Guardamos el nuevo carrito en localStorage
             localStorage.setItem('cart', JSON.stringify(newCart));
-            
-            // Recargamos la página para mostrar el carrito actualizado
-            console.log('Producto eliminado, recargando carrito...');
+            console.log('Producto eliminado, recargando...');
             location.reload(); 
         });
     });

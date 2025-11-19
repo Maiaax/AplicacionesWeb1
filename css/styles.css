@@ -352,3 +352,43 @@ footer p {
     color: var(--color-texto-secundario);
     padding: 3rem;
 }
+
+/*
+ESTILOS PARA EL TICKET DEL CARRITO Y BOTÓN COMPRAR 
+*/
+
+.cart-summary {
+    text-align: right;
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.cart-summary h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--color-texto);
+}
+
+.btn-buy {
+    background-color: #28a745; 
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-buy:hover {
+    background-color: #218838;
+}
+
+/* Efecto visual para los botones de cantidad */
+.quantity-selector button:active {
+    background-color: #ccc;
+}
