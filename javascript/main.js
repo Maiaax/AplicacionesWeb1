@@ -112,23 +112,53 @@ function initCarousel(basePath) {
     const container = document.getElementById('carousel-placeholder');
     if (!container) return; 
 
-    const images = ['images/abrigo.jpg', 'images/jeans.jpg', 'images/remera.jpg'];
+    // Array de objetos: Imagen + textos, como en una pagina real
+    const slidesData = [
+        {
+            img: 'images/banner1.jpg', 
+            title: 'ELEGANCIA ATEMPORAL',
+            text: 'Descubre la nueva colección 2025.'
+        },
+        {
+            img: 'images/banner2.jpg', 
+            title: 'ESENCIA & CARÁCTER',
+            text: 'Prendas que definen tu estilo.'
+        },
+        {
+            img: 'images/banner3.jpg', 
+            title: 'DENIM DE ALTA COSTURA',
+            text: 'La comodidad se encuentra con el lujo.'
+        }
+    ];
     let currentSlide = 0;
 
-    images.forEach((img, index) => {
+// Crear las diapositivas
+    slidesData.forEach((item, index) => {
         const slide = document.createElement('div');
         slide.className = 'carousel-slide';
         if (index === 0) slide.classList.add('active');
-        slide.innerHTML = `<img src="${basePath}${img}" alt="Slide ${index + 1}">`;
+
+        // Contenido de cada slide
+        slide.innerHTML = ` 
+            <img src="${basePath}${item.img}" alt="${item.title}">
+            <div class="carousel-overlay"></div> <div class="carousel-content"> 
+                <h2>${item.title}</h2>
+                <p>${item.text}</p>
+                <a href="#product-grid" class="btn-luxury">VER COLECCIÓN</a>
+            </div>
+        `;
         container.appendChild(slide);
     });
-
+// Seleccionar todas las diapositivas
     const slides = document.querySelectorAll('.carousel-slide');
+
+    // Lógica de cambio automático
     setInterval(() => {
         slides[currentSlide].classList.remove('active');
         currentSlide = (currentSlide + 1) % slides.length;
         slides[currentSlide].classList.add('active');
-    }, 4000); 
+    }, 5000); 
+
 }
 
 // --- Función Renderizado de Grilla (Catálogo) ---
